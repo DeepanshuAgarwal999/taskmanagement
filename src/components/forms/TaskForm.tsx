@@ -33,7 +33,7 @@ export default function TaskForm({ action, taskToEdit }: { action: "create" | "u
         defaultValues: {
             title: "",
             message: "",
-            dueDate: undefined || new Date(),
+            dueDate: new Date(),
         },
     });
     useEffect(() => {

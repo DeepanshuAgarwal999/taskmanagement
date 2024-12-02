@@ -18,7 +18,7 @@ const Suggestion = ({ setSuggestedTitle }: { setSuggestedTitle: React.Dispatch<R
         try {
             setIsLoading(true)
             const { data } = await axios({
-                url: "https://gene rativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + import.meta.env.VITE_GEMINI_API_KEY,
+                url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + import.meta.env.VITE_GEMINI_API_KEY,
                 method: "POST",
                 data: {
                     contents: [

@@ -2,11 +2,13 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { Tasks } from '@/redux/slices/task.slice'
+import { Toast } from './ui/toast'
+import { useToast } from '@/hooks/use-toast'
 
 const Suggestion = ({ setSuggestedTitle }: { setSuggestedTitle: React.Dispatch<React.SetStateAction<string[] | null>> }) => {
     const titles = useSelector(Tasks).map(task => task.title)
     const [isLoading, setIsLoading] = useState(false)
-
+    const { toast } = useToast()
     const generateSuggestions = async () => {
         if (titles.length === 0) {
             alert('No titles available to generate suggestions.');
@@ -16,7 +18,7 @@ const Suggestion = ({ setSuggestedTitle }: { setSuggestedTitle: React.Dispatch<R
         try {
             setIsLoading(true)
             const { data } = await axios({
-                url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + import.meta.env.VITE_GEMINI_API_KEY,
+                url: "https://gene rativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + import.meta.env.VITE_GEMINI_API_KEY,
                 method: "POST",
                 data: {
                     contents: [
@@ -38,6 +40,10 @@ const Suggestion = ({ setSuggestedTitle }: { setSuggestedTitle: React.Dispatch<R
 
         } catch (error) {
             console.log(error)
+            toast({
+                title: "unable to fetch title",
+                description: "Seems like connectivity issue is there!",
+            })
         }
         finally {
             setIsLoading(false)

@@ -20,6 +20,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { cn } from '@/lib/utils';
 import { useDispatch } from 'react-redux';
 import { addTask, updateTask } from '@/redux/slices/task.slice';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
     title: z.string().min(1, "Task title is required."),
@@ -36,6 +37,7 @@ export default function TaskForm({ action, taskToEdit }: { action: "create" | "u
             dueDate: new Date(),
         },
     });
+    const { toast } = useToast()
     useEffect(() => {
         if (action === 'update' && taskToEdit) {
             form.setValue('title', taskToEdit.title)
@@ -50,10 +52,18 @@ export default function TaskForm({ action, taskToEdit }: { action: "create" | "u
         if (action === "update" && taskToEdit) {
             data.updatedAt = new Date()
             dispatch(updateTask({ ...data, id: taskToEdit.id, createdAt: taskToEdit.createdAt }))
+            toast({
+                title: "Success",
+                description: "Task updated successfully",
+            })
         }
         else {
             data.createdAt = new Date()
             dispatch(addTask({ ...data, id: Date.now() }))
+            toast({
+                title: "Success",
+                description: "Task added successfully",
+            })
         }
         form.reset()
     }

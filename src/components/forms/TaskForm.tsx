@@ -69,7 +69,7 @@ export default function TaskForm({ action, taskToEdit }: { action: "create" | "u
     }
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" aria-label='task form'>
                 <FormField
                     control={form.control}
                     name="title"

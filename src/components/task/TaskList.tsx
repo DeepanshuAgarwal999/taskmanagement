@@ -23,10 +23,9 @@ export const TaskList = () => {
 
             if (filter.dueDate) {
 
-                // console.log(dueDate && dueDate< filter.dueDate)
                 console.log(dueDate)
                 console.log(filter.dueDate)
-                return dueDate && dueDate.toDateString() <= filter.dueDate.toDateString();
+                return dueDate && dueDate.toDateString() === filter.dueDate.toDateString();
             }
             if (filter.overdue) {
                 return isOverdue;
@@ -36,7 +35,7 @@ export const TaskList = () => {
         });
     };
 
-    const filteredTasks = filterTasks(tasks);
+    const filteredTasks = filterTasks(tasks) || [];
 
     const handleDueDateChange = (date: Date | undefined) => {
         setFilter((prev) => ({ ...prev, dueDate: date }));

@@ -7,7 +7,6 @@ import { useDispatch } from 'react-redux'
 import { deleteTask } from '@/redux/slices/task.slice'
 import { PenIcon, Trash } from 'lucide-react'
 import { format } from 'date-fns'
-import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
 import { Label } from '../ui/label'
 
@@ -27,7 +26,7 @@ export const TaskCard = ({ task }: { task: Task }) => {
                     <div className='inline-flex items-center gap-2'>
                         <Dialog>
                             <DialogTrigger asChild>
-                                <Button variant="outline"><PenIcon />   </Button>
+                                <Button variant="outline" aria-label="Edit Task"><PenIcon />   </Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[425px]">
                                 <TaskForm action="update" taskToEdit={task} />

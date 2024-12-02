@@ -1,30 +1,34 @@
 import { Tasks } from '@/redux/slices/task.slice'
 import React, { useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { TaskCard } from './TaskCard'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from '../ui/drawer'
 import { Button } from '../ui/button'
 import { Filter } from 'lucide-react'
 import { Label } from '../ui/label'
-import { addFilter } from '@/redux/actions' // Assuming you have an action to add filter
+import { Calendar } from '../ui/calendar'
+import { Checkbox } from '../ui/checkbox'
 
 export const TaskList = () => {
-    const dispatch = useDispatch();
-    const tasks = useSelector(Tasks)
-    const [filter, setFilter] = useState({ dueDate: '', overdue: false });
+    const tasks = useSelector(Tasks);
+    const [filter, setFilter] = useState<{ dueDate: Date | undefined; overdue: boolean }>({
+        dueDate: undefined,
+        overdue: false,
+    });
 
-    const filterTasks = (tasks) => {
+    const filterTasks = (tasks: Task[]) => {
         return tasks.filter((task) => {
             const dueDate = task.dueDate ? new Date(task.dueDate) : null;
             const isOverdue = dueDate && dueDate < new Date();
 
             if (filter.dueDate) {
-                // Filter tasks by dueDate
-                return dueDate && dueDate.toLocaleDateString() === new Date(filter.dueDate).toLocaleDateString();
-            }
 
+                // console.log(dueDate && dueDate< filter.dueDate)
+                console.log(dueDate)
+                console.log(filter.dueDate)
+                return dueDate && dueDate.toDateString() <= filter.dueDate.toDateString();
+            }
             if (filter.overdue) {
-                // Filter overdue tasks
                 return isOverdue;
             }
 
@@ -34,17 +38,16 @@ export const TaskList = () => {
 
     const filteredTasks = filterTasks(tasks);
 
-    const handleDueDateChange = (e) => {
-        const newDueDate = e.target.value;
-        setFilter(prev => ({ ...prev, dueDate: newDueDate }));
+    const handleDueDateChange = (date: Date | undefined) => {
+        setFilter((prev) => ({ ...prev, dueDate: date }));
     };
 
     const handleOverdueToggle = () => {
-        setFilter(prev => ({ ...prev, overdue: !prev.overdue }));
+        setFilter((prev) => ({ ...prev, overdue: !prev.overdue }));
     };
 
     if (!tasks || tasks.length === 0) {
-        return <div className='text-center mt-20 font-semibold'>No tasks found</div>
+        return <div className='text-center mt-20 font-semibold'>No tasks found</div>;
     }
 
     return (
@@ -52,29 +55,33 @@ export const TaskList = () => {
             <div className='flex items-center mb-4 justify-between'>
                 <Drawer>
                     <DrawerTrigger asChild>
-                        <Button variant="outline"><Filter /></Button>
+                        <Button variant="outline">
+                            <Filter />
+                        </Button>
                     </DrawerTrigger>
                     <DrawerContent>
-                        <div className="mx-auto w-full max-w-sm">
+                        <div className="w-full mx-auto max-w-lg">
                             <DrawerHeader>
                                 <DrawerTitle>Filter Tasks</DrawerTitle>
                                 <DrawerDescription>Filter tasks by date</DrawerDescription>
                             </DrawerHeader>
-                            <div className='space-y-4'>
+                            <div className='space-y-4 flex justify-between flex-wrap py-8'>
                                 <div>
                                     <Label>Due Date</Label>
-                                    <input
-                                        type="date"
-                                        value={filter.dueDate}
-                                        onChange={handleDueDateChange}
+                                    <Calendar
+                                        disabled={(date) =>
+                                            date < new Date()
+                                        }
+                                        mode='single'
+                                        selected={filter.dueDate || undefined}
+                                        onSelect={handleDueDateChange}
                                         className="mt-2"
                                     />
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                    <input
-                                        type="checkbox"
+                                <div className="flex items-center space-x-2 self-start">
+                                    <Checkbox
                                         checked={filter.overdue}
-                                        onChange={handleOverdueToggle}
+                                        onCheckedChange={handleOverdueToggle}
                                         className="h-4 w-4"
                                     />
                                     <Label>Show Overdue Tasks Only</Label>
@@ -85,11 +92,9 @@ export const TaskList = () => {
                 </Drawer>
                 <h2 className="text-center text-xl font-bold"> Tasks ({filteredTasks.length})</h2>
             </div>
-            {
-                filteredTasks?.map((task) => (
-                    <TaskCard key={task.id} task={task} />
-                ))
-            }
+            {filteredTasks.map((task) => (
+                <TaskCard key={task.id} task={task} />
+            ))}
         </div>
-    )
-}
+    );
+};
